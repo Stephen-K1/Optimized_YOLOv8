@@ -1,0 +1,33 @@
+加载数据很慢因为/data/vjuicefs_sz_ocr_001/72179367/codes/ultralytics-main/ultralytics/data/dataset.py中， 117行，每次都会计算整个数据集的哈希值，即数据集中每张图片和label的绝对路径，以及整个images和
+labels所占的内存大小之和(用的是os.path.getsize()方法，遍历整个images和labels，主要是这步占时间)，要和labels.cache中保存的一样，否则重新建一个labels.cache，因为当前的图片和label和其他一些属性是从
+labels.cache缓存中读取的，所以使用labels.cache前先和coco.yaml中读到的images和labels比较
+多gpu的这句话在/opt/anaconda3/envs/pytorch112/lib/python3.8/site-packages/ultralytics/data/dataset.py的118行
+
+构建模型的代码在ultralytics/nn/tasks.py的parse_model函数中，line 761
+模型forward的代码(x = m(x))的代码也在ultralytics/nn/tasks.py, line 123 
+
+original yolov8n
+Param=3.2M, 8.9GFLOPs, AP50: 48.2, AP50:95: 33.5
+new dfl
+Param=3.2M, 8.9GFLOPs, AP50: 49.4, AP50:95: 34.3
+0.9 * new_dfl + 0.1 * pixel_section
+Param=3.2M, 9.0GFLOPs, AP50: 49.0, AP50:95: 34.1
+reg_max=11
+Param=3.0M, 8.2GFLOPs, AP50: 49.0, AP50:95: 34.1
+
+
+
+dfl new:
+reg_max=16, offset_branch_channel=128, Param=4.1M, 13GFLOPs, AP50: 49.4, AP50:95: 34.5
+reg_max=24, offset_branch_channel=64, Param=3.8, 11.6GFLOPs, AP50: 49.0, AP50:95: 34.1
+reg_max=16, offset_branch_channel=96, Param=3.8, 11.5GFLOPs, AP50: 49.5, AP50:95: 34.5
+reg_max=16, offset_branch_channel=96, dfl_weight=1.0, Param=3.8, 11.5GFLOPs, AP50: 49.0, AP50:95: 33.1
+reg_max=24, offset_branch_channel=96, Param=4.1, 12.8GFLOPs, 
+
+
+Larger head: 6.3M parameters, 24.3 GFLOPs, AP50: 49.9, AP50:95: 35.0
+Larger 8x head: 4.1M parameters, 20.4 GFLOPs, AP50: 49.1, AP50:95: 34.1
+
+2x channel c2f: 6.6M, 17.3GFLOPs, AP50: 51.8, AP50:95: 36.6
+2x c2f: 7.38M, 21.5GFLOPs, AP50: 54.4, AP50:95: 39.0
+4x c2f: 12.11M, 35.3GFLPs, AP50: 58.0, AP50:95: 42.3

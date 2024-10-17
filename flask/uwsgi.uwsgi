@@ -1,0 +1,22 @@
+[uwsgi]
+chdir=/data/vjuicefs_sz_ocr_001/72179367/codes/ultralytics-main/flask
+wsgi-file=run_flask.py                   #加载指定的WSGI文件
+callable=app                              #设置在收到请求时，uWSGI加载的模块中哪个变量将被调用，默认是名字为“application”的变量
+module = run_flask:app
+master=true                               #启动主进程。
+processes=2                              #设置工作进程的数量。这个设置是你的app能实现简单并且安全的并发能力的基础,每一个工作进程都等同于一个系统进程，它消耗内存，所以需要小心设置工作进程的数量。
+threads=1                                 #开启线程操作模式,必须指定每个工作进程的线程数。
+http=0.0.0.0:5052                         #开启嵌入的http服务器、路由、网关、负载均衡、代理。
+http-keepalive = 1
+add-header=Connection: Keep-Alive
+vacuum=true                              #当服务器退出的时候自动删除unix socket文件和pid文件。
+pidfile=%(chdir)/iphone.pid                #用来重启和停止uwsgi服务
+stats=%(chdir)/iphone.status                #用来查看uwsgi的服务状态
+uid=root                                  #在uWSGI服务器将要运行的情况下，设置uid。
+gid=root                                  #在uWSGI服务器将要运行的情况下，设置gid。
+procname-prefix-spaced=iphone              #用这个选项给进程名指定前缀时，前缀和进程名之间有空格分隔
+# chmod-socket=660                         #如果你的uwsgi客户端没有权限访问uWSGI socket，你可以用这个选项设置unix socket的权限。
+socket-timeout=6000                      #为所有的socket操作设置内部超时时间（默认4秒）这个配置会结束那些处于不活动状态超过6000秒的连接。
+lazy-apps=true
+cpu-affinity=0-3                           #设置CPU的亲和性
+#socket=/tmp/iphone.sock
