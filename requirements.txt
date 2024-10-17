@@ -8,7 +8,7 @@ codecov
 flake8
 interrogate
 kwarray
-isort==4.3.21
+isort==5.13.2
 -e git+https://github.com/open-mmlab/mmtracking#egg=mmtrack
 onnx==1.7.0
 onnxruntime>=1.8.0
