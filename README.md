@@ -17,12 +17,24 @@ pip install -r requirements.txt
 
 <details open>
 <summary>Usage</summary>
-### 命令行
+
 
 运行下面命令进行训练：
 
 ```
 python train.py
+```
+
+测试：
+
+```
+python validate.py
+```
+
+部署：
+
+```
+python export.py
 ```
 
 YOLOv8 可以在命令行界面（CLI）中直接使用，只需输入 `yolo` 命令：
